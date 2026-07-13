@@ -1,8 +1,8 @@
 cask "interpose-operator" do
   version "0.1.0"
-  sha256 "4fb565637523a3390a379b4ba1a870ff9cc1533c908b19d7504ae02491dbf366"
+  sha256 "53503536bcbadfde5038c58c68df1a438cc74f94f07f2b4abf75e6a87ffd902b"
 
-  url "https://github.com/interposed/interpose-operator/releases/download/v#{version}/InterposeOperator.app.zip"
+  url "https://github.com/interposed/interpose-operator-releases/releases/download/v#{version}/InterposeOperator.app.zip"
   name "Interpose Operator"
   desc "Cross-platform operator console for interposed"
   homepage "https://interposed.ai"
