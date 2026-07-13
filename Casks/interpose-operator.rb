@@ -1,6 +1,6 @@
 cask "interpose-operator" do
   version "0.1.0"
-  sha256 :no_check # until the first tagged release; the release CI fills this in
+  sha256 "4fb565637523a3390a379b4ba1a870ff9cc1533c908b19d7504ae02491dbf366"
 
   url "https://github.com/interposed/interpose-operator/releases/download/v#{version}/InterposeOperator.app.zip"
   name "Interpose Operator"
