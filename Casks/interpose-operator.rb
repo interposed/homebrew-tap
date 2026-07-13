@@ -1,6 +1,6 @@
 cask "interpose-operator" do
-  version "0.1.0"
-  sha256 "53503536bcbadfde5038c58c68df1a438cc74f94f07f2b4abf75e6a87ffd902b"
+  version "0.1.1"
+  sha256 "f706de6b272c9c7ec00ce3469a1404268e250c0fae57a4590d45380adced6398"
 
   url "https://github.com/interposed/interpose-operator-releases/releases/download/v#{version}/InterposeOperator.app.zip"
   name "Interpose Operator"
@@ -50,14 +50,18 @@ cask "interpose-operator" do
       </dict>
       </plist>
     PLIST
-    system_command "/bin/launchctl", args: ["unload", plist], must_succeed: false
-    system_command "/bin/launchctl", args: ["load", plist], must_succeed: false
+    # Modern launchctl (bootout/bootstrap) — load/unload is deprecated and prints
+    # a spurious "Input/output error" on Sequoia. bootout clears any stale copy;
+    # bootstrap loads the agent for this GUI session (RunAtLoad also starts it).
+    uid = Process.uid
+    system_command "/bin/launchctl", args: ["bootout", "gui/#{uid}/ai.interposed.fido-bridge"], must_succeed: false
+    system_command "/bin/launchctl", args: ["bootstrap", "gui/#{uid}", plist], must_succeed: false
   end
 
   uninstall_postflight do
     require "fileutils"
     plist = File.expand_path("~/Library/LaunchAgents/ai.interposed.fido-bridge.plist")
-    system_command "/bin/launchctl", args: ["unload", plist], must_succeed: false if File.exist?(plist)
+    system_command "/bin/launchctl", args: ["bootout", "gui/#{Process.uid}/ai.interposed.fido-bridge"], must_succeed: false
     FileUtils.rm_f(plist)
     FileUtils.rm_f(File.expand_path("~/Library/Application Support/interpose-operator/interpose-fido-bridge"))
   end
