@@ -1,6 +1,6 @@
 cask "interpose-operator" do
-  version "1.6.1"
-  sha256 "e9282f1a82f89bc0e2ef24ee98045afa5479da604ddc55f20ced80c95b28952e"
+  version "1.7.0"
+  sha256 "b588f6cefc02dae35418b4080c6d6cb0a133bbd344862ab5dfcdfdc50c3cd2fc"
 
   url "https://github.com/interposed/interpose-operator-releases/releases/download/v#{version}/InterposeOperator.app.zip"
   name "Interpose Operator"
