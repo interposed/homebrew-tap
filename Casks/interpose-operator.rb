@@ -1,6 +1,6 @@
 cask "interpose-operator" do
-  version "1.14.0"
-  sha256 "f8dcd6a01db47b6bb4c7bb0f5181c1b283eb2356f47811603b2237df1bc666d9"
+  version "1.15.1"
+  sha256 "19d7b8b5e3b3be358bee2e5514c71e2afe27cf312d87c1e73f31ba67e5732b08"
 
   url "https://downloads.interposed.ai/interpose-operator/darwin/arm64/v#{version}/InterposeOperator.app.zip"
   name "Interpose Operator"
