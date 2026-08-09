@@ -1,6 +1,6 @@
 cask "interpose-operator" do
-  version "1.18.0"
-  sha256 "f578d2993bf425addd805f36874a042d976cde1cbc2e263c895606fc6c802f52"
+  version "1.18.1"
+  sha256 "f3eb6fad32582dd1802119a5359bc6f6df34e06c451b4680009f15ba7e2fb3ba"
 
   url "https://downloads.interposed.ai/interpose-operator/darwin/arm64/v#{version}/InterposeOperator.app.zip"
   name "Interpose Operator"
@@ -28,14 +28,24 @@ cask "interpose-operator" do
     bridge_dst = "#{support}/interpose-fido-bridge"
     next unless File.exist?(bridge_src)
 
+    require "digest"
+
     FileUtils.mkdir_p(support)
-    FileUtils.cp(bridge_src, bridge_dst)
-    FileUtils.chmod(0o755, bridge_dst)
+    # Only reinstall the bridge binary when it actually changed. Re-registering
+    # the LaunchAgent (bootout/bootstrap below) fires macOS's "App Background
+    # Activity" notification every time, so a version bump that doesn't touch the
+    # bridge should stay silent.
+    bridge_changed = !File.exist?(bridge_dst) ||
+                     Digest::SHA256.file(bridge_src).hexdigest != Digest::SHA256.file(bridge_dst).hexdigest
+    if bridge_changed
+      FileUtils.cp(bridge_src, bridge_dst)
+      FileUtils.chmod(0o755, bridge_dst)
+    end
 
     agents = File.expand_path("~/Library/LaunchAgents")
     FileUtils.mkdir_p(agents)
     plist = "#{agents}/ai.interposed.fido-bridge.plist"
-    File.write(plist, <<~PLIST)
+    plist_body = <<~PLIST
       <?xml version="1.0" encoding="UTF-8"?>
       <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
       <plist version="1.0">
@@ -50,12 +60,19 @@ cask "interpose-operator" do
       </dict>
       </plist>
     PLIST
+    plist_changed = !File.exist?(plist) || File.read(plist) != plist_body
+    File.write(plist, plist_body) if plist_changed
+
+    # Re-register only when the bridge or its plist changed; otherwise the running
+    # agent is already correct and we skip the background-activity notification.
     # Modern launchctl (bootout/bootstrap) — load/unload is deprecated and prints
     # a spurious "Input/output error" on Sequoia. bootout clears any stale copy;
     # bootstrap loads the agent for this GUI session (RunAtLoad also starts it).
-    uid = Process.uid
-    system_command "/bin/launchctl", args: ["bootout", "gui/#{uid}/ai.interposed.fido-bridge"], must_succeed: false
-    system_command "/bin/launchctl", args: ["bootstrap", "gui/#{uid}", plist], must_succeed: false
+    if bridge_changed || plist_changed
+      uid = Process.uid
+      system_command "/bin/launchctl", args: ["bootout", "gui/#{uid}/ai.interposed.fido-bridge"], must_succeed: false
+      system_command "/bin/launchctl", args: ["bootstrap", "gui/#{uid}", plist], must_succeed: false
+    end
   end
 
   uninstall_postflight do
