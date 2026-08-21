@@ -1,8 +1,9 @@
 cask "interpose-operator" do
-  version "1.25.4"
-  sha256 "3586e1538ea0ec51b969812396e548370a085a3affe9374cb509ab20384c9e6f"
+  version "1.25.5"
+  sha256 "7d13dc27e83b7816dcb6e34319e8c346ed566ce8bc78cc1b3b34ef4da37d41ab"
 
-  url "https://downloads.interposed.ai/interpose-operator/darwin/arm64/v#{version}/InterposeOperator.app.zip"
+  # Universal DMG (arm64 + amd64) — one cask serves both Apple Silicon and Intel.
+  url "https://downloads.interposed.ai/interpose-operator/darwin/universal/v#{version}/InterposeOperator.dmg"
   name "Interpose Operator"
   desc "Cross-platform operator console for interposed"
   homepage "https://interposed.ai"
