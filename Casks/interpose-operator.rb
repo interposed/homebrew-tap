@@ -1,6 +1,6 @@
 cask "interpose-operator" do
-  version "2.17.0"
-  sha256 "5d504b625673e01b8b30db3bfcf9e82866349b7ea3a11699a0bae8ffff3d68e8"
+  version "2.18.0"
+  sha256 "b30abb3e03d1b5b5f83b8506779e3f93493697c1262b7c2464b95d6217bc9ed8"
 
   # Universal DMG (arm64 + amd64) — one cask serves both Apple Silicon and Intel.
   url "https://downloads.interposed.ai/interpose-operator/darwin/universal/v#{version}/InterposeOperator.dmg"
